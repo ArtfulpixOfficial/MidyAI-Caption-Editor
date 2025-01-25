@@ -7,7 +7,7 @@ interface Word {
   word: string;
 }
 
-interface Segment {
+export interface Segment {
   start: number;
   end: number;
   text: string;
@@ -34,7 +34,7 @@ export function getCaptionLines(
   input: Input,
   fontSize: number,
   fontFamily: string,
-  maxWidth: number,
+  maxWidth: number
 ): ICaptionLines {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d")!;
@@ -85,7 +85,7 @@ export function getCaptionLines(
 }
 
 export const getCaptions = (
-  captionLines: ICaptionLines,
+  captionLines: ICaptionLines
 ): Partial<ICaption>[] => {
   const captions = captionLines.lines.map((line) => {
     return {

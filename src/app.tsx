@@ -17,14 +17,14 @@ import {
   openAiWhisperApiToCaptions,
   OpenAiToCaptionsInput,
 } from "@remotion/openai-whisper";
-import { createTikTokStyleCaptions, Caption } from "@remotion/captions";
+import { createTikTokStyleCaptions } from "@remotion/captions";
 import { DEFAULT_FONT } from "./data/fonts";
 import { getCaptionLines, getCaptions } from "./pages/editor/utils/captions";
-import AnimatedCircularProgressBar from "./components/ui/animated-circular-progress";
+import { Segment } from "./pages/editor/utils/captions";
 import { Hourglass } from "react-loader-spinner";
 const supabaseClient = createClient(
   import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
 const openai = new OpenAI({
@@ -41,7 +41,7 @@ export default function App() {
     loadingStatus,
     isLoading,
     setIsLoading,
-    inputVideo,
+
     setInputVideo,
     subtitle,
     setSubtitle,
@@ -113,11 +113,11 @@ export default function App() {
               };
             }),
           };
-        }),
+        }) as Segment[],
       },
       30,
       DEFAULT_FONT.postScriptName,
-      800,
+      800
     );
 
     const processedCaptions = getCaptions(captionLines);
