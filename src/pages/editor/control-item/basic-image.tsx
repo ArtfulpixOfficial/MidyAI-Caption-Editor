@@ -172,12 +172,12 @@ const BasicImage = ({ trackItem }: { trackItem: ITrackItem & IImage }) => {
       </div>
       <ScrollArea className="h-full">
         <div className="flex flex-col gap-2 px-4">
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <Button variant={"secondary"} size={"icon"}>
               <Crop size={18} />
             </Button>
           </div>
-          <AspectRatio />
+          <AspectRatio /> */}
           <Flip trackItem={trackItem} />
           <Rounded
             onChange={(v: number) => onChangeBorderRadius(v)}

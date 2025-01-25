@@ -34,7 +34,7 @@ export default function MenuList() {
         className={cn(
           showMenuItem && activeMenuItem === "texts"
             ? "bg-secondary"
-            : "text-muted-foreground",
+            : "text-muted-foreground"
         )}
         variant={"ghost"}
         size={"icon"}
@@ -49,14 +49,14 @@ export default function MenuList() {
         className={cn(
           showMenuItem && activeMenuItem === "videos"
             ? "bg-secondary"
-            : "text-muted-foreground",
+            : "text-muted-foreground"
         )}
         variant={"ghost"}
         size={"icon"}
       >
         <Icons.video width={20} />
       </Button>
-      <Button
+      {/* <Button
         onClick={() => {
           setActiveMenuItem("captions");
           setShowMenuItem(true);
@@ -70,7 +70,7 @@ export default function MenuList() {
         size={"icon"}
       >
         <Icons.captions width={20} />
-      </Button>
+      </Button> */}
       <Button
         onClick={() => {
           setActiveMenuItem("images");
@@ -79,7 +79,7 @@ export default function MenuList() {
         className={cn(
           showMenuItem && activeMenuItem === "images"
             ? "bg-secondary"
-            : "text-muted-foreground",
+            : "text-muted-foreground"
         )}
         variant={"ghost"}
         size={"icon"}
@@ -109,7 +109,7 @@ export default function MenuList() {
         className={cn(
           showMenuItem && activeMenuItem === "audios"
             ? "bg-secondary"
-            : "text-muted-foreground",
+            : "text-muted-foreground"
         )}
         variant={"ghost"}
         size={"icon"}
@@ -125,7 +125,7 @@ export default function MenuList() {
         className={cn(
           showMenuItem && activeMenuItem === "transitions"
             ? "bg-secondary"
-            : "text-muted-foreground",
+            : "text-muted-foreground"
         )}
         variant={"ghost"}
         size={"icon"}
