@@ -5,13 +5,14 @@ interface VideoContextType {
   inputVideo: File | string | null;
   language: { name: string; code: string };
   setLanguage: (language: { name: string; code: string }) => void;
-  setInputVideo: (inputVideo: File | string | null) => void;
+  setInputVideo: any;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
   subtitle: any;
   setSubtitle: (subtitle: any) => void;
   loadingStatus: string;
   setLoadingStatus: (loadingStatus: string) => void;
+  reset: () => void;
 }
 
 // Create the context with a default value
@@ -26,6 +27,7 @@ const VideoContext = createContext<VideoContextType>({
   setSubtitle: () => {},
   loadingStatus: "",
   setLoadingStatus: () => {},
+  reset: () => {},
 });
 
 // Define the props for the provider component
@@ -81,7 +83,7 @@ const useVideoContext = (): VideoContextType => {
   const context = useContext(VideoContext);
   if (!context) {
     throw new Error(
-      "useVideoContext must be used within a CustomVideoProvider",
+      "useVideoContext must be used within a CustomVideoProvider"
     );
   }
   return context;
