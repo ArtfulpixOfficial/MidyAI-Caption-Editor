@@ -13,10 +13,7 @@ import { languages } from "./data/languages";
 import { useVideoContext } from "./components/context/VideoProvider";
 import "primereact/resources/primereact.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
-import {
-  openAiWhisperApiToCaptions,
-  OpenAiToCaptionsInput,
-} from "@remotion/openai-whisper";
+import { OpenAiToCaptionsInput } from "@remotion/openai-whisper";
 import { createTikTokStyleCaptions } from "@remotion/captions";
 import { DEFAULT_FONT } from "./data/fonts";
 import { getCaptionLines, getCaptions } from "./pages/editor/utils/captions";
@@ -32,6 +29,78 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
+// const openAiWhisperApiToCaptions = ({ transcription }) => {
+//   const captions = [];
+//   if (!transcription.words) {
+//     throw new Error(
+//       'The transcription must be generated with timestamp_granularities: ["word"]'
+//     );
+//   }
+//   let remainingText = transcription.text;
+//   for (const word of transcription.words) {
+//     // Fix: Remove the extra caret before ".{0,4}" so that the pattern only anchors at the beginning.
+//     const regex = new RegExp(`^(.{0,4}?)${word.word}([\\?,\\.]{0,3})?`);
+
+//     const match = regex.exec(remainingText);
+//     if (!match) {
+//       throw new Error(
+//         `Unable to parse punctuation from OpenAI Whisper output. Could not find word "${word.word}" in text "${remainingText.slice(0, 100)}". File an issue under https://remotion.dev/issue to ask for a fix.`
+//       );
+//     }
+//     const foundText = match[0];
+//     remainingText = remainingText.slice(foundText.length);
+//     captions.push({
+//       confidence: null,
+//       endMs: word.end * 1000,
+//       startMs: word.start * 1000,
+//       text: foundText,
+//       timestampMs: ((word.start + word.end) / 2) * 1000,
+//     });
+//   }
+//   return { captions };
+// };
+const openAiWhisperApiToCaptions = ({ transcription }) => {
+  const captions = [];
+
+  if (!transcription.words) {
+    if (transcription.task && transcription.task !== "transcribe") {
+      throw new Error(
+        `The transcription does need to be a "transcribe" task. The input you gave is "task": "${transcription.task}"`
+      );
+    }
+
+    throw new Error(
+      'The transcription does need to be been generated with `timestamp_granularities: ["word"]`'
+    );
+  }
+
+  let remainingText = transcription.text;
+
+  for (const word of transcription.words) {
+    const punctuation = `\\?,\\.\\%\\–\\!\\;\\:\\'\\"\\-\\_\\(\\)\\[\\]\\{\\}\\@\\#\\$\\^\\&\\*\\+\\=\\/\\|\\<\\>\\~\``;
+    const match = new RegExp(
+      `^([\\s${punctuation}]{0,4})${word.word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([${punctuation}]{0,3})?`
+    ).exec(remainingText);
+    if (!match) {
+      throw new Error(
+        `Unable to parse punctuation from OpenAI Whisper output. Could not find word "${word.word}" in text "${remainingText.slice(0, 100)}". File an issue under https://remotion.dev/issue to ask for a fix.`
+      );
+    }
+
+    const foundText = match[0];
+    remainingText = remainingText.slice(foundText.length);
+
+    captions.push({
+      confidence: null,
+      endMs: word.end * 1000,
+      startMs: word.start * 1000,
+      text: foundText,
+      timestampMs: ((word.start + word.end) / 2) * 1000,
+    });
+  }
+
+  return { captions };
+};
 export default function App() {
   const { setCompactFonts, setFonts } = useDataState();
   const {
@@ -54,6 +123,57 @@ export default function App() {
   async function onFileChange(file: any) {
     setUploadedFile(file);
   }
+
+  async function extractAudioWithTransloadit(file: File): Promise<Blob> {
+    const params = {
+      auth: { key: "27b2cd5d68c14992cb056ff350f29e60" },
+      steps: {
+        audio_extract: {
+          robot: "/audio/encode",
+          use: ":original",
+          preset: "mp3",
+          bitrate: 128000, // Lower bitrate since it's just for Whisper
+          ffmpeg_stack: "v6.0.0",
+        },
+      },
+    };
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("params", JSON.stringify(params));
+
+    const response = await fetch("https://api2.transloadit.com/assemblies", {
+      method: "POST",
+      body: formData,
+    });
+
+    const assembly = await response.json();
+
+    // Poll for completion
+    let result;
+    for (let i = 0; i < 30; i++) {
+      const statusResponse = await fetch(
+        `https://api2.transloadit.com/assemblies/${assembly.assembly_id}`
+      );
+      result = await statusResponse.json();
+
+      if (result.ok === "ASSEMBLY_COMPLETED") {
+        break;
+      } else if (
+        result.ok === "ASSEMBLY_CANCELED" ||
+        result.ok === "ASSEMBLY_FAILED"
+      ) {
+        throw new Error("Audio extraction failed");
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    // Get the audio file
+    const audioUrl = result.results.audio_extract[0].ssl_url;
+    const audioResponse = await fetch(audioUrl);
+    return await audioResponse.blob();
+  }
   async function generateCaptions() {
     if (!uploadedFile || !language) return;
     const file: File | null = uploadedFile;
@@ -72,15 +192,20 @@ export default function App() {
       .getPublicUrl(`videos/inputVideo_${tempName}${file.name.slice(-4)}`)
       .data.publicUrl;
     setInputVideo(videoPublicUrl);
+
+    // 2. Extract audio using Transloadit
+    setLoadingStatus("Extracting audio...");
+    const audioBlob = await extractAudioWithTransloadit(file);
+
     setLoadingStatus("Generating Subtitles");
     const transcription = await openai.audio.transcriptions.create({
       model: "whisper-1",
-      file: file,
+      file: new File([audioBlob], "audio.mp3", { type: "audio/mp3" }),
       response_format: "verbose_json",
       language: language.code,
       timestamp_granularities: ["word"],
     });
-
+    console.log(transcription);
     // console.log(transcription);
     const { captions } = openAiWhisperApiToCaptions({
       transcription,
