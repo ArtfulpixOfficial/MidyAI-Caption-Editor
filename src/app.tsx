@@ -16,12 +16,13 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import { OpenAiToCaptionsInput } from "@remotion/openai-whisper";
 import { createTikTokStyleCaptions } from "@remotion/captions";
 import { DEFAULT_FONT } from "./data/fonts";
-import { getCaptionLines, getCaptions } from "./pages/editor/utils/captions";
-import { Segment } from "./pages/editor/utils/captions";
+// import { getCaptionLines, getCaptions } from "./pages/editor/utils/captions";
+// import { Segment } from "./pages/editor/utils/captions";
+import { generateCaptions as gC } from "./pages/editor/utils/captions";
 import { Hourglass } from "react-loader-spinner";
 const supabaseClient = createClient(
   import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
 const openai = new OpenAI({
@@ -29,48 +30,18 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-// const openAiWhisperApiToCaptions = ({ transcription }) => {
-//   const captions = [];
-//   if (!transcription.words) {
-//     throw new Error(
-//       'The transcription must be generated with timestamp_granularities: ["word"]'
-//     );
-//   }
-//   let remainingText = transcription.text;
-//   for (const word of transcription.words) {
-//     // Fix: Remove the extra caret before ".{0,4}" so that the pattern only anchors at the beginning.
-//     const regex = new RegExp(`^(.{0,4}?)${word.word}([\\?,\\.]{0,3})?`);
-
-//     const match = regex.exec(remainingText);
-//     if (!match) {
-//       throw new Error(
-//         `Unable to parse punctuation from OpenAI Whisper output. Could not find word "${word.word}" in text "${remainingText.slice(0, 100)}". File an issue under https://remotion.dev/issue to ask for a fix.`
-//       );
-//     }
-//     const foundText = match[0];
-//     remainingText = remainingText.slice(foundText.length);
-//     captions.push({
-//       confidence: null,
-//       endMs: word.end * 1000,
-//       startMs: word.start * 1000,
-//       text: foundText,
-//       timestampMs: ((word.start + word.end) / 2) * 1000,
-//     });
-//   }
-//   return { captions };
-// };
 const openAiWhisperApiToCaptions = ({ transcription }) => {
   const captions = [];
 
   if (!transcription.words) {
     if (transcription.task && transcription.task !== "transcribe") {
       throw new Error(
-        `The transcription does need to be a "transcribe" task. The input you gave is "task": "${transcription.task}"`
+        `The transcription does need to be a "transcribe" task. The input you gave is "task": "${transcription.task}"`,
       );
     }
 
     throw new Error(
-      'The transcription does need to be been generated with `timestamp_granularities: ["word"]`'
+      'The transcription does need to be been generated with `timestamp_granularities: ["word"]`',
     );
   }
 
@@ -79,11 +50,11 @@ const openAiWhisperApiToCaptions = ({ transcription }) => {
   for (const word of transcription.words) {
     const punctuation = `\\?,\\.\\%\\–\\!\\;\\:\\'\\"\\-\\_\\(\\)\\[\\]\\{\\}\\@\\#\\$\\^\\&\\*\\+\\=\\/\\|\\<\\>\\~\``;
     const match = new RegExp(
-      `^([\\s${punctuation}]{0,4})${word.word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([${punctuation}]{0,3})?`
+      `^([\\s${punctuation}]{0,4})${word.word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([${punctuation}]{0,3})?`,
     ).exec(remainingText);
     if (!match) {
       throw new Error(
-        `Unable to parse punctuation from OpenAI Whisper output. Could not find word "${word.word}" in text "${remainingText.slice(0, 100)}". File an issue under https://remotion.dev/issue to ask for a fix.`
+        `Unable to parse punctuation from OpenAI Whisper output. Could not find word "${word.word}" in text "${remainingText.slice(0, 100)}". File an issue under https://remotion.dev/issue to ask for a fix.`,
       );
     }
 
@@ -102,6 +73,7 @@ const openAiWhisperApiToCaptions = ({ transcription }) => {
   return { captions };
 };
 export default function App() {
+  // const { user } = useAuthStore();
   const { setCompactFonts, setFonts } = useDataState();
   const {
     language,
@@ -120,6 +92,7 @@ export default function App() {
     setCompactFonts(getCompactFontData(FONTS));
     setFonts(FONTS);
   }, []);
+
   async function onFileChange(file: any) {
     setUploadedFile(file);
   }
@@ -153,7 +126,7 @@ export default function App() {
     let result;
     for (let i = 0; i < 30; i++) {
       const statusResponse = await fetch(
-        `https://api2.transloadit.com/assemblies/${assembly.assembly_id}`
+        `https://api2.transloadit.com/assemblies/${assembly.assembly_id}`,
       );
       result = await statusResponse.json();
 
@@ -206,16 +179,38 @@ export default function App() {
       timestamp_granularities: ["word"],
     });
     console.log(transcription);
-    // console.log(transcription);
-    const { captions } = openAiWhisperApiToCaptions({
-      transcription,
-    } as OpenAiToCaptionsInput);
-    console.log(captions);
 
-    const { pages } = createTikTokStyleCaptions({
-      captions,
-      combineTokensWithinMilliseconds: 1200,
-    });
+    const initialCaptions = gC(
+      {
+        sourceUrl: videoPublicUrl,
+        results: {
+          main: {
+            words: transcription.words,
+          },
+        },
+      },
+      {
+        fontUrl: DEFAULT_FONT.url,
+        fontFamily: DEFAULT_FONT.family,
+        fontSize: 80,
+      },
+      {
+        containerWidth: 800,
+        linesPerCaption: 1,
+        parentId: null,
+        displayFrom: 0,
+      },
+    );
+    // console.log(transcription);
+    // const { captions } = openAiWhisperApiToCaptions({
+    //   transcription,
+    // } as OpenAiToCaptionsInput);
+    // console.log(captions);
+
+    // const { pages } = createTikTokStyleCaptions({
+    //   captions,
+    //   combineTokensWithinMilliseconds: 1200,
+    // });
     await loadFonts([
       {
         name: DEFAULT_FONT.fullName,
@@ -223,60 +218,35 @@ export default function App() {
       },
     ]);
 
-    const captionLines = getCaptionLines(
-      {
-        segments: pages.map((sub) => {
-          return {
-            start: sub.startMs,
-            end: sub.tokens.at(-1)?.toMs,
-            text: sub.text,
-            words: sub.tokens.map((tok: any) => {
-              return {
-                word: tok.text,
-                start: tok.fromMs,
-                end: tok.toMs,
-              };
-            }),
-          };
-        }) as Segment[],
-      },
-      30,
-      DEFAULT_FONT.postScriptName,
-      800
-    );
+    // const captionLines = getCaptionLines(
+    //   {
+    //     segments: pages.map((sub) => {
+    //       return {
+    //         start: sub.startMs,
+    //         end: sub.tokens.at(-1)?.toMs,
+    //         text: sub.text,
+    //         words: sub.tokens.map((tok: any) => {
+    //           return {
+    //             word: tok.text,
+    //             start: tok.fromMs,
+    //             end: tok.toMs,
+    //           };
+    //         }),
+    //       };
+    //     }) as Segment[],
+    //   },
+    //   30,
+    //   DEFAULT_FONT.postScriptName,
+    //   800,
+    // );
 
-    const processedCaptions = getCaptions(captionLines);
-    setSubtitle(processedCaptions);
+    // const processedCaptions = getCaptions(captionLines);
+    setSubtitle(initialCaptions);
     setIsLoading(false);
     setLoadingStatus("Done");
     setUploadedFile(null);
-    console.log(processedCaptions);
-    // console.log(
-    //   pages.map((sub) => {
-    //     return {
-    //       start: sub.startMs,
-    //       end: sub.tokens.at(-1)?.toMs,
-    //       text: sub.text,
-    //       words: sub.tokens.map((tok: any) => {
-    //         return {
-    //           word: tok.text,
-    //           start: tok.fromMs,
-    //           end: tok.toMs,
-    //         };
-    //       }),
-    //     };
-    //   }),
-    // );
+    console.log(initialCaptions);
   }
-  // return (
-  //   <AnimatedCircularProgressBar
-  //     max={100}
-  //     min={0}
-  //     value={0}
-  //     gaugePrimaryColor="#fff"
-  //     gaugeSecondaryColor="#000"
-  //   />
-  // );
   if (!subtitle)
     return (
       <div className="flex flex-col items-center justify-center pt-5">

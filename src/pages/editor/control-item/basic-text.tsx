@@ -9,7 +9,8 @@ import { DEFAULT_FONT } from "@/data/fonts";
 import { ICompactFont, IFont } from "@/interfaces/editor";
 import useDataState from "../store/use-data-state";
 import { loadFonts } from "../utils/fonts";
-import { EDIT_OBJECT, dispatch } from "@designcombo/events";
+import { dispatch } from "@designcombo/events";
+import { EDIT_OBJECT } from "@designcombo/state";
 import { ChevronDown, Strikethrough, Underline } from "lucide-react";
 import { useEffect, useState } from "react";
 import Opacity from "./common/opacity";
@@ -67,7 +68,7 @@ const BasicText = ({ trackItem }: { trackItem: ITrackItem & IText }) => {
       blur: 0,
     },
   });
-
+  // console.log(properties.textDecoration);
   const [selectedFont, setSelectedFont] = useState<ICompactFont>({
     family: "Open Sans",
     styles: [],
@@ -77,11 +78,14 @@ const BasicText = ({ trackItem }: { trackItem: ITrackItem & IText }) => {
   const { compactFonts, fonts } = useDataState();
 
   useEffect(() => {
+    console.log(trackItem);
     const fontFamily =
       trackItem.details.fontFamily || DEFAULT_FONT.postScriptName;
+    console.log(fontFamily);
     const currentFont = fonts.find(
       (font) => font.postScriptName === fontFamily,
     )!;
+    console.log(currentFont);
     const selectedFont = compactFonts.find(
       (font) => font.family === currentFont?.family,
     )!;
@@ -300,9 +304,17 @@ const BasicText = ({ trackItem }: { trackItem: ITrackItem & IText }) => {
   };
 
   const onChangeTextDecoration = (v: string) => {
-    setProperties({
-      ...properties,
-      textDecoration: v,
+    console.log(v);
+    // setProperties({
+    //   ...properties,
+    //   textDecoration: v,
+    // });
+
+    setProperties((prev) => {
+      return {
+        ...prev,
+        textDecoration: v,
+      } as ITextControlProps;
     });
 
     dispatch(EDIT_OBJECT, {

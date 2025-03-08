@@ -1,7 +1,8 @@
 import { PlayerRef } from "@remotion/player";
 import { RefObject, useEffect } from "react";
 import useStore from "@/pages/editor/store/use-store";
-import { ENTER_EDIT_MODE, dispatch } from "@designcombo/events";
+import { dispatch } from "@designcombo/events";
+import { ENTER_EDIT_MODE } from "@designcombo/state";
 import { getTargetById, getTypeFromClassName } from "../utils/target";
 
 export default function useUpdateAnsestors({
@@ -49,7 +50,8 @@ export default function useUpdateAnsestors({
     if (!element) return;
     const handleDoubleClick = (e: MouseEvent) => {
       const type = getTypeFromClassName(element.className);
-      if (type === "text") {
+      console.log(type);
+      if (type === "text" || type === "caption") {
         dispatch(ENTER_EDIT_MODE, {
           payload: {
             id: activeIds[0],

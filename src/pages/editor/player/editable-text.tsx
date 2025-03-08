@@ -4,14 +4,13 @@ const TextLayer: React.FC<{
   id: string;
   content: string;
   onChange?: (id: string, content: string) => void;
+  onBlur?: (id: string, content: string) => void;
   style?: React.CSSProperties;
   editable?: boolean;
-}> = ({ id, content, editable, style = {} }) => {
+}> = ({ id, content, editable, style = {}, onChange, onBlur }) => {
   const [data, setData] = useState(content);
   const divRef = useRef<HTMLDivElement>(null);
-  console.log(data);
-  console.log(editable);
-  console.log(divRef.current);
+
   useEffect(() => {
     if (editable && divRef.current) {
       const element = divRef.current;
@@ -49,6 +48,7 @@ const TextLayer: React.FC<{
     e.stopPropagation();
     const selection = window.getSelection();
     const element = divRef.current;
+
     if (selection?.rangeCount && element) {
       const range = selection.getRangeAt(0);
       if (range.endOffset - range.startOffset === element.textContent?.length) {
@@ -63,6 +63,8 @@ const TextLayer: React.FC<{
       ref={divRef}
       contentEditable={editable}
       onClick={handleClick}
+      onInput={(ev) => onChange!(id, (ev.target as any).innerText)}
+      onBlur={(ev) => onBlur!(id, (ev.target as any).innerText)}
       style={{
         height: "100%",
         boxShadow: "none",

@@ -54,7 +54,7 @@ export const Icons = {
   arrowLeft: ArrowLeft,
   billing: CreditCard,
   bookOpen: BookOpen,
-  captions: Captions,
+  caption: Captions,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   check: Check,

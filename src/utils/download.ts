@@ -1,5 +1,3 @@
-
-
 export const download = (url: string, filename: string) => {
   fetch(url)
     .then((response) => response.blob())

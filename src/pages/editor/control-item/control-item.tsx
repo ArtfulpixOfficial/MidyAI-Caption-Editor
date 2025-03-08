@@ -22,7 +22,8 @@ import useStore from "../store/use-store";
 
 const Container = ({ children }: { children: React.ReactNode }) => {
   const { activeToolboxItem, setActiveToolboxItem } = useLayoutStore();
-  const { activeIds, trackItemsMap, trackItemDetailsMap } = useStore();
+  const { activeIds, trackItemsMap, trackItemDetailsMap, transitionsMap } =
+    useStore();
   const [trackItem, setTrackItem] = useState<ITrackItem | null>(null);
   const [displayToolbox, setDisplayToolbox] = useState<boolean>(false);
 
@@ -34,7 +35,8 @@ const Container = ({ children }: { children: React.ReactNode }) => {
         ...trackItemsMap[id],
         details: trackItemDetails?.details || {},
       };
-      setTrackItem(trackItem);
+      if (trackItemDetails) setTrackItem(trackItem);
+      else console.log(transitionsMap[id]);
     } else {
       setTrackItem(null);
       setDisplayToolbox(false);
@@ -60,7 +62,7 @@ const Container = ({ children }: { children: React.ReactNode }) => {
         transition: "right 0.25s ease-in-out",
         zIndex: 200,
       }}
-      className="absolute top-1/2 mt-6 flex h-[calc(100%-32px-64px)] w-[280px] -translate-y-1/2 rounded-lg shadow-lg"
+      className="absolute top-1/2 mt-6 flex h-[calc(100%-32px-64px)] w-[340px] -translate-y-1/2 rounded-lg shadow-lg"
     >
       <div className="relative flex h-full w-[266px] bg-background/80 backdrop-blur-lg backdrop-filter">
         <Button
@@ -81,6 +83,7 @@ const Container = ({ children }: { children: React.ReactNode }) => {
           activeToolboxItem,
         })}
       </div>
+      <div className="w-[74px]"></div>
     </div>
   );
 };
@@ -115,6 +118,7 @@ const ActiveControlItem = ({
             <BasicAudio trackItem={trackItem as ITrackItem & IAudio} />
           ),
           "preset-text": <Presets />,
+          "preset-caption": <Presets />,
           animation: <Animations />,
           smart: <Smart />,
         }[activeToolboxItem]

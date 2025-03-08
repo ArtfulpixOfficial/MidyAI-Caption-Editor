@@ -28,7 +28,6 @@ const SceneEmpty = () => {
   }, [size]);
 
   const onSelectFiles = (files: File[]) => {
-    console.log("OnSelectFiles");
     console.log({ files });
   };
 

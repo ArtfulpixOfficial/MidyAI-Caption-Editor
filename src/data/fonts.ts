@@ -12870,4 +12870,18 @@ export const FONTS = [
     updatedAt: "2023-06-20T04:42:55.909Z",
     userId: null,
   },
+  {
+    id: "font_vt323",
+    family: "VT323",
+    fullName: "VT323 Regular",
+    postScriptName: "VT323-Regular",
+    preview:
+      "https://txt.1001fonts.net/img/txt/dHRmLjg4LjAwMDAwMC5kblF6TWpNLC4w/vt323.regular.png",
+    style: "VT323-Regular",
+    url: "https://www.1001fonts.com/download/font/vt323.regular.ttf",
+    category: "monospace",
+    createdAt: "2025-03-07T00:00:00.000Z",
+    updatedAt: "2025-03-07T00:00:00.000Z",
+    userId: null,
+  },
 ];
