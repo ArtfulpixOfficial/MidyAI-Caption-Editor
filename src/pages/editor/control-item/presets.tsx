@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import Draggable from "@/components/shared/draggable";
 import { dispatch } from "@designcombo/events";
 import { EDIT_OBJECT } from "@designcombo/state";
@@ -64,7 +64,7 @@ const PresetsMenuItem = ({
       WebkitTextStrokeWidth: preset.WebkitTextStrokeWidth,
       fontSize: `${parseInt(preset.fontSize) * 0.5}px`,
     }),
-    [preset],
+    [preset]
   );
 
   return (
@@ -75,7 +75,7 @@ const PresetsMenuItem = ({
     // >
     <div className="mb-4" onClick={() => applyTextPreset(preset)}>
       {/* <div> */}
-      <div style={style} draggable={false}>
+      <div style={style as CSSProperties} draggable={false}>
         Sample text
       </div>
       {/* </div> */}
