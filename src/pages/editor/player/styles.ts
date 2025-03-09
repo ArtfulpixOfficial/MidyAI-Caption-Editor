@@ -2,7 +2,7 @@ import { IImage, IText, ITrackItem } from "@designcombo/types";
 
 export const calculateCropStyles = (
   details: IImage["details"],
-  crop: IImage["details"]["crop"],
+  crop: IImage["details"]["crop"]
 ) => ({
   width: details.width || "100%",
   height: details.height || "auto",
@@ -14,7 +14,7 @@ export const calculateCropStyles = (
 
 export const calculateMediaStyles = (
   details: ITrackItem["details"],
-  crop: ITrackItem["details"]["crop"],
+  crop: ITrackItem["details"]["crop"]
 ) => {
   return {
     pointerEvents: "none",
@@ -31,7 +31,7 @@ export const calculateMediaStyles = (
 };
 
 export const calculateTextStyles = (
-  details: IText["details"],
+  details: IText["details"]
 ): React.CSSProperties => ({
   position: "relative",
   textDecoration: details.textDecoration || "none",
@@ -45,7 +45,7 @@ export const calculateTextStyles = (
   lineHeight: details.lineHeight || "normal",
   letterSpacing: details.letterSpacing || "normal",
   wordSpacing: details.wordSpacing || "normal",
-  wordWrap: details.wordWrap || "",
+  wordWrap: details.wordWrap || "normal",
   wordBreak: details.wordBreak || "normal",
   textTransform: details.textTransform || "none",
   fontSize: details.fontSize || "16px",
@@ -57,7 +57,7 @@ export const calculateTextStyles = (
 export const calculateContainerStyles = (
   details: ITrackItem["details"],
   crop: ITrackItem["details"]["crop"] = {},
-  overrides: React.CSSProperties = {},
+  overrides: React.CSSProperties = {}
 ): React.CSSProperties => {
   return {
     pointerEvents: "auto",

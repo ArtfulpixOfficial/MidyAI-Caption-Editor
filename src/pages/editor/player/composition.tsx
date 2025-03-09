@@ -10,7 +10,6 @@ import {
 import { merge } from "lodash";
 import { groupTrackItems } from "../utils/track-items";
 import { calculateTextHeight } from "../utils/text";
-import { Transitions } from "./presentations";
 
 const Composition = () => {
   const [editableTextId, setEditableTextId] = useState<string | null>(null);
@@ -104,7 +103,7 @@ const Composition = () => {
   //   handle track and track item events - updates
   useEffect(() => {
     const stateEvents = subject.pipe(
-      filter(({ key }) => key.startsWith(ENTER_EDIT_MODE)),
+      filter(({ key }) => key.startsWith(ENTER_EDIT_MODE))
     );
 
     const subscription = stateEvents.subscribe((obj) => {
@@ -112,7 +111,7 @@ const Composition = () => {
         if (editableTextId) {
           // get element by  data-text-id={id}
           const element = document.querySelector(
-            `[data-text-id="${editableTextId}"]`,
+            `[data-text-id="${editableTextId}"]`
           );
           if (trackItemIds.includes(editableTextId)) {
             dispatch(EDIT_OBJECT, {
