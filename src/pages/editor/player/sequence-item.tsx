@@ -3,18 +3,13 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { AbsoluteFill, Audio, Img, OffthreadVideo, Sequence } from "remotion";
 import TextLayer from "./editable-text";
-import {
-  IAudio,
-  ICaption,
-  IImage,
-  IItem,
-  IText,
-  IVideo,
-} from "@designcombo/types";
+import { IAudio, IImage, IItem, IText, IVideo } from "@designcombo/types";
+import { ICaptionExtended } from "@/interfaces/captions";
 import useStore from "../store/use-store";
 import { useCurrentPlayerFrame } from "@/hooks/use-current-frame";
 import { calculateFrames } from "../utils/frames";
 import { Animated } from "./animated";
+import { CaptionWord } from "./CaptionWord";
 import {
   calculateContainerStyles,
   calculateMediaStyles,
@@ -32,69 +27,6 @@ interface SequenceItemOptions {
   active?: boolean;
   onTextBlur?: (id: string, text: string) => void;
 }
-
-interface WordSpanProps {
-  isActive: boolean;
-  activeBackgroundColor: string;
-  activeColor: string;
-}
-
-const WordSpan = styled.span<WordSpanProps>`
-  position: relative;
-  display: inline-block;
-  padding: 0 0.2em;
-  color: #fff;
-  border-radius: 16px;
-
-  z-index: 99;
-  &::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    // background-color: transparent;
-    border-radius: 0.1em;
-    left: -0.2em;
-    right: -0.2em;
-    top: 0;
-    bottom: 0;
-    transition: background-color 0.2s ease;
-    border-radius: 16px;
-  }
-
-  ${(props) =>
-    props.isActive &&
-    css`
-      color: ${props.activeColor};
-      &::before {
-        background-color: ${props.activeBackgroundColor};
-      }
-    `}
-`;
-
-const CaptionWord = ({
-  word,
-  offsetFrom,
-}: {
-  word: any;
-  offsetFrom: number;
-}) => {
-  const { playerRef } = useStore();
-  const currentFrame = useCurrentPlayerFrame(playerRef!);
-  const { start, end } = word;
-  const startAtFrame = ((start + offsetFrom) / 1000) * 30;
-  const endAtFrame = ((end + offsetFrom) / 1000) * 30;
-  const isActive = currentFrame > startAtFrame && currentFrame < endAtFrame;
-
-  return (
-    <WordSpan
-      isActive={isActive}
-      activeColor={"#50FF12"}
-      activeBackgroundColor="#7E12FF" // You can make this dynamic by passing it as a prop or from a theme
-    >
-      {word.word}
-    </WordSpan>
-  );
-};
 
 export const SequenceItem: Record<
   string,
@@ -144,11 +76,16 @@ export const SequenceItem: Record<
   caption: (item, options: SequenceItemOptions) => {
     const { fps, zIndex, handleTextChange, onTextBlur, editableTextId } =
       options;
-    const { id, details, metadata, display, animations } = item as ICaption;
+    const { id, details, metadata, display, animations } =
+      item as ICaptionExtended;
     const { from, durationInFrames } = calculateFrames(item.display, fps);
     const { animationIn, animationOut } = getAnimations(animations!, item);
     const [firstWord] = metadata.words;
     const offsetFrom = display.from - firstWord.start;
+    // Get caption styling options from details if available
+    const activeColor = details.activeColor || "#50FF12";
+    const activeBackgroundColor = details.activeBackgroundColor || "#7E12FF";
+    // console.log(item.metadata.words);
     return (
       <Sequence
         key={item.id}
@@ -169,6 +106,48 @@ export const SequenceItem: Record<
             animationOut={editableTextId === id ? null : animationOut}
             durationInFrames={durationInFrames + REMOTION_SAFE_FRAME}
           >
+            {editableTextId === id ? (
+              // Show TextLayer when in edit mode
+              <TextLayer
+                key={id}
+                id={id}
+                // Use the full text from metadata words
+                content={metadata.words.map((word) => word.word).join(" ")}
+                editable={true}
+                onChange={(id, text) => {
+                  handleTextChange?.(id, text);
+                }}
+                onBlur={(id, text) => {
+                  // When editing is done, update the text and timing data
+                  onTextBlur?.(id, text);
+                }}
+                style={{
+                  ...calculateTextStyles(details),
+                  // WebkitTextStroke: "10px #000000",
+                  paintOrder: "stroke fill",
+                }}
+              />
+            ) : (
+              // Show animated caption words when not in edit mode
+              <div
+                style={{
+                  ...calculateTextStyles(details),
+                  // WebkitTextStroke: "10px #000000",
+                  paintOrder: "stroke fill",
+                }}
+              >
+                {item.metadata.words.map((word: any, index: number) => (
+                  <CaptionWord
+                    offsetFrom={offsetFrom}
+                    word={word}
+                    key={index}
+                    captionColor={details.color}
+                    activeColor={activeColor}
+                    activeBackgroundColor={activeBackgroundColor}
+                  />
+                ))}
+              </div>
+            )}
             {/* <div
               style={{
                 ...calculateTextStyles(details),
@@ -177,10 +156,18 @@ export const SequenceItem: Record<
               }}
             >
               {item.metadata.words.map((word: any, index: number) => (
-                <CaptionWord offsetFrom={offsetFrom} word={word} key={index} />
+                <CaptionWord
+                  offsetFrom={offsetFrom}
+                  word={word}
+                  key={index}
+                  captionColor={details.color}
+                  activeColor={activeColor}
+                  activeBackgroundColor={activeBackgroundColor}
+                />
               ))}
             </div> */}
-            <TextLayer
+
+            {/* <TextLayer
               key={id}
               id={id}
               content={details.text}
@@ -188,7 +175,7 @@ export const SequenceItem: Record<
               onChange={handleTextChange}
               onBlur={onTextBlur}
               style={calculateTextStyles(details)}
-            />
+            /> */}
           </Animated>
         </AbsoluteFill>
       </Sequence>
@@ -245,7 +232,7 @@ export const SequenceItem: Record<
         from: item.display.from / playbackRate,
         to: item.display.to / playbackRate,
       },
-      fps,
+      fps
     );
     const crop = details.crop || {
       x: 0,
@@ -298,7 +285,7 @@ export const SequenceItem: Record<
         from: item.display.from / playbackRate,
         to: item.display.to / playbackRate,
       },
-      fps,
+      fps
     );
     return (
       <Sequence

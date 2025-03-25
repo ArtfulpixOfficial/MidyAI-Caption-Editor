@@ -8,6 +8,7 @@ import {
   ITrackItemAndDetails,
   IVideo,
 } from "@designcombo/types";
+import { ICaptionExtended } from "@/interfaces/captions";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -15,6 +16,7 @@ import Presets from "./presets";
 import Animations from "./animations";
 import Smart from "./smart";
 import BasicText from "./basic-text";
+import BasicCaption from "./basic-caption";
 import BasicImage from "./basic-image";
 import BasicVideo from "./basic-video";
 import BasicAudio from "./basic-audio";
@@ -106,7 +108,9 @@ const ActiveControlItem = ({
             <BasicText trackItem={trackItem as ITrackItem & IText} />
           ),
           "basic-caption": (
-            <BasicText trackItem={trackItem as ITrackItem & IText} />
+            <BasicCaption
+              trackItem={trackItem as ITrackItem & ICaptionExtended}
+            />
           ),
           "basic-image": (
             <BasicImage trackItem={trackItem as ITrackItem & IImage} />

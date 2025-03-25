@@ -1,5 +1,9 @@
 import { generateId } from "@designcombo/timeline";
-import { ICaption } from "@designcombo/types";
+// import { ICaption } from "@designcombo/types";
+import {
+  ICaptionExtended,
+  ICaptionDetailsExtended,
+} from "@/interfaces/captions";
 
 interface Word {
   start: number;
@@ -19,8 +23,8 @@ export const generateCaption = (
   captionLine: ICaptionLine,
   fontInfo: FontInfo,
   options: Options,
-  sourceUrl: string,
-): ICaption => {
+  sourceUrl: string
+): ICaptionExtended => {
   const caption = {
     id: generateId(),
     type: "caption",
@@ -47,9 +51,11 @@ export const generateCaption = (
       fontUrl: fontInfo.fontUrl,
       color: "#fff",
       textAlign: "center",
-    } as unknown,
+      activeColor: "#50FF12",
+      activeBackgroundColor: "#7E12FF",
+    } as ICaptionDetailsExtended,
   };
-  return caption as ICaption;
+  return caption as ICaptionExtended;
 };
 
 interface Word {
@@ -71,7 +77,7 @@ interface CaptionsInput {
 function createCaptionLines(
   input: CaptionsInput,
   fontInfo: FontInfo,
-  options: Options,
+  options: Options
 ): ICaptionLine[] {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d")!;
@@ -149,12 +155,12 @@ interface Options {
 export function generateCaptions(
   input: CaptionsInput,
   fontInfo: FontInfo,
-  options: Options,
-): ICaption[] {
+  options: Options
+): ICaptionExtended[] {
   const captionLines = createCaptionLines(input, fontInfo, options);
 
   const captions = captionLines.map((line) =>
-    generateCaption(line, fontInfo, options, input.sourceUrl),
+    generateCaption(line, fontInfo, options, input.sourceUrl)
   );
 
   return captions;

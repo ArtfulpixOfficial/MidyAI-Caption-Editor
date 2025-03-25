@@ -22,7 +22,7 @@ import { generateCaptions as gC } from "./pages/editor/utils/captions";
 import { Hourglass } from "react-loader-spinner";
 const supabaseClient = createClient(
   import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
 const openai = new OpenAI({
@@ -36,12 +36,12 @@ const openAiWhisperApiToCaptions = ({ transcription }) => {
   if (!transcription.words) {
     if (transcription.task && transcription.task !== "transcribe") {
       throw new Error(
-        `The transcription does need to be a "transcribe" task. The input you gave is "task": "${transcription.task}"`,
+        `The transcription does need to be a "transcribe" task. The input you gave is "task": "${transcription.task}"`
       );
     }
 
     throw new Error(
-      'The transcription does need to be been generated with `timestamp_granularities: ["word"]`',
+      'The transcription does need to be been generated with `timestamp_granularities: ["word"]`'
     );
   }
 
@@ -50,11 +50,11 @@ const openAiWhisperApiToCaptions = ({ transcription }) => {
   for (const word of transcription.words) {
     const punctuation = `\\?,\\.\\%\\–\\!\\;\\:\\'\\"\\-\\_\\(\\)\\[\\]\\{\\}\\@\\#\\$\\^\\&\\*\\+\\=\\/\\|\\<\\>\\~\``;
     const match = new RegExp(
-      `^([\\s${punctuation}]{0,4})${word.word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([${punctuation}]{0,3})?`,
+      `^([\\s${punctuation}]{0,4})${word.word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([${punctuation}]{0,3})?`
     ).exec(remainingText);
     if (!match) {
       throw new Error(
-        `Unable to parse punctuation from OpenAI Whisper output. Could not find word "${word.word}" in text "${remainingText.slice(0, 100)}". File an issue under https://remotion.dev/issue to ask for a fix.`,
+        `Unable to parse punctuation from OpenAI Whisper output. Could not find word "${word.word}" in text "${remainingText.slice(0, 100)}". File an issue under https://remotion.dev/issue to ask for a fix.`
       );
     }
 
@@ -126,7 +126,7 @@ export default function App() {
     let result;
     for (let i = 0; i < 30; i++) {
       const statusResponse = await fetch(
-        `https://api2.transloadit.com/assemblies/${assembly.assembly_id}`,
+        `https://api2.transloadit.com/assemblies/${assembly.assembly_id}`
       );
       result = await statusResponse.json();
 
@@ -191,7 +191,7 @@ export default function App() {
       },
       {
         fontUrl: DEFAULT_FONT.url,
-        fontFamily: DEFAULT_FONT.family,
+        fontFamily: DEFAULT_FONT.postScriptName,
         fontSize: 80,
       },
       {
@@ -199,7 +199,7 @@ export default function App() {
         linesPerCaption: 1,
         parentId: null,
         displayFrom: 0,
-      },
+      }
     );
     // console.log(transcription);
     // const { captions } = openAiWhisperApiToCaptions({
