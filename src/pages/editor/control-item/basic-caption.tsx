@@ -110,7 +110,7 @@ const BasicCaption = ({
     // if (trackItem.details.fontSizeDisplay == undefined) {
     //   trackItem.details.fontSizeDisplay = "62";
     // }
-    console.log(trackItem.details);
+
     setProperties({
       color: trackItem.details.color || "#ffffff",
       colorDisplay: trackItem.details.color || "#ffffff",

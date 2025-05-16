@@ -21,6 +21,7 @@ import BasicImage from "./basic-image";
 import BasicVideo from "./basic-video";
 import BasicAudio from "./basic-audio";
 import useStore from "../store/use-store";
+import Templates from "./templates";
 
 const Container = ({ children }: { children: React.ReactNode }) => {
   const { activeToolboxItem, setActiveToolboxItem } = useLayoutStore();
@@ -122,7 +123,7 @@ const ActiveControlItem = ({
             <BasicAudio trackItem={trackItem as ITrackItem & IAudio} />
           ),
           "preset-text": <Presets />,
-          "preset-caption": <Presets />,
+          "preset-caption": <Templates />,
           animation: <Animations />,
           smart: <Smart />,
         }[activeToolboxItem]

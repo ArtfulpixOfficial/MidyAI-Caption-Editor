@@ -27,7 +27,7 @@ export default function ControlList() {
 function ControlMenu({ controlType }: { controlType: ItemType }) {
   const { setShowToolboxItem, setActiveToolboxItem, activeToolboxItem } =
     useLayoutStore();
-
+  console.log(controlType);
   const openToolboxItem = useCallback(
     (type: string) => {
       if (type === activeToolboxItem) {
@@ -38,7 +38,7 @@ function ControlMenu({ controlType }: { controlType: ItemType }) {
         setActiveToolboxItem(type);
       }
     },
-    [activeToolboxItem],
+    [activeToolboxItem]
   );
 
   return (
@@ -137,10 +137,7 @@ const TextMenuList = ({
         activeToolboxItem={activeToolboxItem}
         openToolboxItem={openToolboxItem}
       />
-      {/* <SmartMenuListItem
-        activeToolboxItem={activeToolboxItem}
-        openToolboxItem={openToolboxItem}
-      /> */}
+
       <PresetsMenuListItem
         activeToolboxItem={activeToolboxItem}
         type={type}

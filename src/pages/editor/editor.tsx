@@ -92,6 +92,7 @@ const App = () => {
         const isLoaded = await checkVideoLoaded(inputVideo);
 
         if (isLoaded && subtitle && subtitle.length > 0) {
+          console.log(subtitle);
           // Now dispatch ADD_CAPTION after video is loaded
           dispatch(ADD_CAPTIONS, {
             payload: subtitle.map((_) => ({
@@ -127,7 +128,7 @@ const App = () => {
       },
       {
         force: true,
-      },
+      }
     );
   };
 

@@ -3,6 +3,7 @@ import { Texts } from "./texts";
 import { Uploads } from "./uploads";
 import { Audios } from "./audios";
 import { Elements } from "./elements";
+import { Captions } from "./captions";
 import { Images } from "./images";
 import { Videos } from "./videos";
 import { X } from "lucide-react";
@@ -39,6 +40,9 @@ const ActiveMenuItem = () => {
 
   if (activeMenuItem === "texts") {
     return <Texts />;
+  }
+  if (activeMenuItem === "captions") {
+    return <Captions />;
   }
 
   if (activeMenuItem === "videos") {
