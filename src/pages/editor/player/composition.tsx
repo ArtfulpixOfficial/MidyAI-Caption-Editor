@@ -20,7 +20,6 @@ const Composition = () => {
     fps,
     trackItemDetailsMap,
     sceneMoveableRef,
-    size,
     transitionsMap,
   } = useStore();
   const mergedTrackItemsDeatilsMap = merge(trackItemsMap, trackItemDetailsMap);
