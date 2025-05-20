@@ -115,28 +115,8 @@ const Composition = () => {
           const element = document.querySelector(
             `[data-text-id="${editableTextId}"]`
           );
-          console.log(element?.innerHTML);
-          // if (trackItemIds.includes(editableTextId)) {
-          //   dispatch(EDIT_OBJECT, {
-          //     payload: {
-          //       [editableTextId]: {
-          //         details: {
-          //           text: element?.innerHTML || "",
-          //         },
-          //       },
-          //     },
-          //   });
-          // } else {
-          //   dispatch(EDIT_TEMPLATE_ITEM, {
-          //     payload: {
-          //       [editableTextId]: {
-          //         details: {
-          //           text: element?.textContent || "",
-          //         },
-          //       },
-          //     },
-          //   });
-          // }
+          // console.log(element?.innerHTML);
+
           if (trackItemIds.includes(editableTextId)) {
             const item = mergedTrackItemsDeatilsMap[editableTextId];
             const newText = element?.innerHTML || "";
@@ -207,7 +187,7 @@ const Composition = () => {
       }
     });
     return () => subscription.unsubscribe();
-  }, [editableTextId, mergedTrackItemsDeatilsMap]);
+  }, [editableTextId, mergedTrackItemsDeatilsMap, trackItemIds]);
 
   return (
     <>

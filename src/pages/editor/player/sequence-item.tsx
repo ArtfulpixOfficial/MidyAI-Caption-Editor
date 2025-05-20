@@ -136,16 +136,23 @@ export const SequenceItem: Record<
                   paintOrder: "stroke fill",
                 }}
               >
-                {item.metadata.words.map((word: any, index: number) => (
-                  <CaptionWord
-                    offsetFrom={offsetFrom}
-                    word={word}
-                    key={index}
-                    captionColor={details.color}
-                    activeColor={activeColor}
-                    activeBackgroundColor={activeBackgroundColor}
-                  />
-                ))}
+                {item.metadata.words.map((word: any, index: number) => {
+                  const adjustedWord = {
+                    ...word,
+                    start: word.start - firstWord.start,
+                    end: word.end - firstWord.start,
+                  };
+                  return (
+                    <CaptionWord
+                      offsetFrom={offsetFrom}
+                      word={adjustedWord}
+                      key={index}
+                      captionColor={details.color}
+                      activeColor={activeColor}
+                      activeBackgroundColor={activeBackgroundColor}
+                    />
+                  );
+                })}
               </div>
             )}
             {/* <div

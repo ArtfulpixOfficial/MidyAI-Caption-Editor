@@ -143,113 +143,6 @@ export default function Navbar() {
   );
 }
 
-// const UserMenu = () => {
-//   const { user, signOut } = useAuthStore();
-//   const navigate = useNavigate();
-//   if (!user) {
-//     return (
-//       <Button
-//         onClick={() => navigate("/auth")}
-//         className="flex h-8 gap-1"
-//         variant="default"
-//       >
-//         Sign in
-//       </Button>
-//     );
-//   }
-
-//   return (
-//     <DropdownMenu>
-//       <DropdownMenuTrigger asChild>
-//         <Avatar className="h-8 w-8 cursor-pointer">
-//           <AvatarImage src={user.avatar} alt="@user" />
-//           <AvatarFallback>{user.email.slice(0, 2)}</AvatarFallback>
-//         </Avatar>
-//       </DropdownMenuTrigger>
-//       <DropdownMenuContent className="mr-2 mt-2 w-56">
-//         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-//         <DropdownMenuSeparator />
-//         <DropdownMenuGroup>
-//           <DropdownMenuItem>
-//             <User className="mr-2 h-4 w-4" />
-//             <span>Profile</span>
-//             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-//           </DropdownMenuItem>
-//           <DropdownMenuItem>
-//             <CreditCard className="mr-2 h-4 w-4" />
-//             <span>Billing</span>
-//             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-//           </DropdownMenuItem>
-//           <DropdownMenuItem>
-//             <Settings className="mr-2 h-4 w-4" />
-//             <span>Settings</span>
-//             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-//           </DropdownMenuItem>
-//           <DropdownMenuItem>
-//             <Keyboard className="mr-2 h-4 w-4" />
-//             <span>Keyboard shortcuts</span>
-//             <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-//           </DropdownMenuItem>
-//         </DropdownMenuGroup>
-//         <DropdownMenuSeparator />
-//         <DropdownMenuGroup>
-//           <DropdownMenuItem>
-//             <Users className="mr-2 h-4 w-4" />
-//             <span>Team</span>
-//           </DropdownMenuItem>
-//           <DropdownMenuSub>
-//             <DropdownMenuSubTrigger>
-//               <UserPlus className="mr-2 h-4 w-4" />
-//               <span>Invite users</span>
-//             </DropdownMenuSubTrigger>
-//             <DropdownMenuPortal>
-//               <DropdownMenuSubContent>
-//                 <DropdownMenuItem>
-//                   <Mail className="mr-2 h-4 w-4" />
-//                   <span>Email</span>
-//                 </DropdownMenuItem>
-//                 <DropdownMenuItem>
-//                   <MessageSquare className="mr-2 h-4 w-4" />
-//                   <span>Message</span>
-//                 </DropdownMenuItem>
-//                 <DropdownMenuSeparator />
-//                 <DropdownMenuItem>
-//                   <PlusCircle className="mr-2 h-4 w-4" />
-//                   <span>More...</span>
-//                 </DropdownMenuItem>
-//               </DropdownMenuSubContent>
-//             </DropdownMenuPortal>
-//           </DropdownMenuSub>
-//           <DropdownMenuItem>
-//             <Plus className="mr-2 h-4 w-4" />
-//             <span>New Team</span>
-//             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-//           </DropdownMenuItem>
-//         </DropdownMenuGroup>
-//         <DropdownMenuSeparator />
-//         <DropdownMenuItem>
-//           <Github className="mr-2 h-4 w-4" />
-//           <span>GitHub</span>
-//         </DropdownMenuItem>
-//         <DropdownMenuItem>
-//           <LifeBuoy className="mr-2 h-4 w-4" />
-//           <span>Support</span>
-//         </DropdownMenuItem>
-//         <DropdownMenuItem disabled>
-//           <Cloud className="mr-2 h-4 w-4" />
-//           <span>API</span>
-//         </DropdownMenuItem>
-//         <DropdownMenuSeparator />
-//         <DropdownMenuItem onClick={signOut}>
-//           <LogOut className="mr-2 h-4 w-4" />
-//           <span>Log out</span>
-//           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-//         </DropdownMenuItem>
-//       </DropdownMenuContent>
-//     </DropdownMenu>
-//   );
-// };
-
 interface IDownloadState {
   renderId: string;
   progress: number;
@@ -299,8 +192,9 @@ const DownloadPopover = () => {
       durationInFrames: Math.ceil((duration / 1000) * fps),
       // sceneMoveableRef,
     };
-    console.log(data);
+    // console.log(data);
     if (Math.ceil(data.durationInFrames / 200) + 1 > 10) return showError();
+
     try {
       setDownloadState((prevState) => ({
         ...prevState,
@@ -333,7 +227,7 @@ const DownloadPopover = () => {
     }
 
     // console.log(renderedData);
-    console.log(data);
+    // console.log(data);
     // console.log(JSON.stringify(data));
   };
 

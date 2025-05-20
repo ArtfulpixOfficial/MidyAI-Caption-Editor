@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import useStore from "../store/use-store";
-import { useCurrentPlayerFrame } from "@/hooks/use-current-frame";
+// import useStore from "../store/use-store";
+// import { useCurrentPlayerFrame } from "@/hooks/use-current-frame";
+import { useCurrentFrame } from "remotion";
+
 interface WordSpanProps {
   isActive: boolean;
   activeBackgroundColor: string;
@@ -50,6 +52,7 @@ export const CaptionWord = ({
   captionColor,
   activeColor = "#50FF12",
   activeBackgroundColor = "#7E12FF",
+
   // textDecoration = "none",
 }: {
   word: any;
@@ -57,13 +60,27 @@ export const CaptionWord = ({
   captionColor: string;
   activeColor: string; // Default value in case no prop is provided
   activeBackgroundColor: string;
+
   // textDecoration: string;
 }) => {
-  const { playerRef } = useStore();
-  const currentFrame = useCurrentPlayerFrame(playerRef!);
+  // const { playerRef } = useStore();
+  // const currentFrame = useCurrentPlayerFrame(playerRef!);
+  const currentFrame = useCurrentFrame();
+
   const { start, end } = word;
-  const startAtFrame = ((start + offsetFrom) / 1000) * 30;
-  const endAtFrame = ((end + offsetFrom) / 1000) * 30;
+  // const absoluteCurrentFrame = currentFrame + compositionStartFrame;
+  const startAtFrame = Math.floor((start / 1000) * 30);
+  const endAtFrame = Math.floor((end / 1000) * 30);
+
+  // console.log({
+  //   word: word.word,
+  //   currentFrame,
+  //   absoluteCurrentFrame,
+  //   startAtFrame,
+  //   endAtFrame,
+  //   offsetFrom,
+  // });
+
   const isActive = currentFrame > startAtFrame && currentFrame < endAtFrame;
 
   return (
